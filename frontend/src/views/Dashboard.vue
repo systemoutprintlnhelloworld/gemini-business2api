@@ -939,15 +939,45 @@ function updateNodeStatsCharts() {
   // 节点成功率柱状图
   charts.nodeStats.setOption({
     ...theme,
-    tooltip: { trigger: 'axis' },
-    legend: { data: ['成功', '风控', '其他'] },
-    grid: { ...theme.grid, top: 48, bottom: 32 },
-    xAxis: { ...theme.xAxis, type: 'category', data: labels },
-    yAxis: { ...theme.yAxis, type: 'value' },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' }
+    },
+    legend: {
+      data: ['成功', '风控', '其他'],
+      top: 0
+    },
+    grid: { ...theme.grid, top: 48, bottom: 32, left: 60, right: 20 },
+    xAxis: {
+      ...theme.xAxis,
+      type: 'category',
+      data: labels,
+      axisLabel: {
+        interval: 0,
+        rotate: labels.length > 5 ? 30 : 0,
+        fontSize: 11
+      }
+    },
+    yAxis: { ...theme.yAxis, type: 'value', minInterval: 1 },
     series: [
-      { name: '成功', type: 'bar', data: success, itemStyle: { color: chartColors.success } },
-      { name: '风控', type: 'bar', data: riskControl, itemStyle: { color: chartColors.warning } },
-      { name: '其他', type: 'bar', data: other, itemStyle: { color: chartColors.error } }
+      {
+        name: '成功',
+        type: 'bar',
+        data: success,
+        itemStyle: { color: chartColors.success }
+      },
+      {
+        name: '风控',
+        type: 'bar',
+        data: riskControl,
+        itemStyle: { color: chartColors.warning }
+      },
+      {
+        name: '其他',
+        type: 'bar',
+        data: other,
+        itemStyle: { color: chartColors.error }
+      }
     ]
   })
 

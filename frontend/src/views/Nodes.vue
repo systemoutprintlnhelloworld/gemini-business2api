@@ -67,6 +67,9 @@
           <button @click="toggleSelectAll" class="rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary">
             {{ allSelected ? '取消全选' : '全选' }}
           </button>
+          <button @click="selectFailedOnly" class="rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-amber-500 hover:text-amber-500">
+            选中失败节点
+          </button>
           <button v-if="selectedIds.length > 0" @click="deleteSelected" class="rounded-full border border-destructive px-4 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-white">
             删除选中 ({{ selectedIds.length }})
           </button>
@@ -373,6 +376,12 @@ function toggleSelectAll() {
   } else {
     selectedIds.value = sortedNodes.value.map(n => n.id)
   }
+}
+
+function selectFailedOnly() {
+  selectedIds.value = sortedNodes.value
+    .filter(n => n.success === 0 && n.fail > 0)
+    .map(n => n.id)
 }
 
 function toggleNode(id: string) {

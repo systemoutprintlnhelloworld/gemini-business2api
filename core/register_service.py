@@ -285,7 +285,8 @@ class RegisterService(BaseTaskService[RegisterTask]):
             error = result.get("error", "自动化流程失败")
             log_cb("error", f"❌ 自动登录失败: {error}")
             if current_node and node_manager._stats_tracker:
-                if "403" in error or "banned" in error.lower() or "risk" in error.lower():
+                error_lower = error.lower()
+                if any(keyword in error_lower for keyword in ["403", "banned", "risk", "verification code timeout", "verify", "captcha"]):
                     node_manager._stats_tracker.record(current_node, "risk_control")
                 else:
                     node_manager._stats_tracker.record(current_node, "other")
