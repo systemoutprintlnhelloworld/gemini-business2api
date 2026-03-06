@@ -2012,6 +2012,10 @@ async def _apply_node_proxy():
     """节点变更后，重新从节点池选择代理并在需要时重建 HTTP 客户端。"""
     global PROXY_FOR_AUTH, PROXY_FOR_CHAT, http_client, http_client_chat, http_client_auth
 
+    # 更新 Clash 配置
+    from core.node_manager import _update_clash_config
+    _update_clash_config()
+
     new_auth = get_effective_proxy("auth", config.basic.proxy_for_auth)
     new_chat = get_effective_proxy("chat", config.basic.proxy_for_chat)
 

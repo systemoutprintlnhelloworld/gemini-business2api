@@ -177,9 +177,14 @@ class ClashManager:
             cfg.setdefault("mode", "global")
             cfg.setdefault("log-level", "silent")
 
-            # 确保有 proxies 和 proxy-groups
+            # 确保有 proxies
             cfg.setdefault("proxies", [])
-            cfg.setdefault("proxy-groups", [{"name": "GLOBAL", "type": "select", "proxies": ["DIRECT"]}])
+
+            # 构建 proxy-groups：收集所有代理名称
+            proxy_names = [p.get("name") for p in cfg.get("proxies", []) if p.get("name")]
+            proxy_names.append("DIRECT")
+
+            cfg["proxy-groups"] = [{"name": "GLOBAL", "type": "select", "proxies": proxy_names}]
             cfg.setdefault("rules", ["MATCH,GLOBAL"])
 
             with open(self.runtime_config_path, "w", encoding="utf-8") as f:

@@ -217,8 +217,8 @@ class RegisterService(BaseTaskService[RegisterTask]):
         # 节点轮询
         current_node = None
         current_node_url = None
-        if node_manager.rotate_node():
-            current_node = node_manager.rotate_node()
+        current_node = node_manager.rotate_node()
+        if current_node:
             current_node_url = node_manager.get_current_proxy()
             if current_node_url:
                 proxy_for_auth = current_node_url
