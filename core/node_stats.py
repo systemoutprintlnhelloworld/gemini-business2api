@@ -36,17 +36,36 @@ class NodeStatsTracker:
         return self._load_stats()
 
     def get_chart_data(self) -> Dict:
-        """返回 ECharts 格式数据"""
+        """返回 ECharts 格式数据（只显示有数据的节点）"""
         stats = self._load_stats()
-        labels = list(stats.keys())
+        # 过滤出有数据的节点
+        active_nodes = [
+            name for name in stats.keys()
+            if stats[name].get("success", 0) + stats[name].get("risk_control", 0) + stats[name].get("other", 0) > 0
+        ]
+        labels = [self._simplify_node_name(n) for n in active_nodes]
         return {
             "labels": labels,
             "datasets": [
-                {"label": "成功", "data": [stats[n].get("success", 0) for n in labels]},
-                {"label": "风控", "data": [stats[n].get("risk_control", 0) for n in labels]},
-                {"label": "其他", "data": [stats[n].get("other", 0) for n in labels]},
+                {"label": "成功", "data": [stats[n].get("success", 0) for n in active_nodes]},
+                {"label": "风控", "data": [stats[n].get("risk_control", 0) for n in active_nodes]},
+                {"label": "其他", "data": [stats[n].get("other", 0) for n in active_nodes]},
             ],
         }
+
+    def _simplify_node_name(self, name: str) -> str:
+        """简化节点名称: '🇭🇰 香港｜Hong Kong 03' -> '香港 03'"""
+        import re
+        # 提取中文地区名和数字
+        match = re.search(r'[\u4e00-\u9fff]+.*?(\d+)', name)
+        if match:
+            # 提取emoji后的中文部分和数字
+            parts = re.split(r'[｜|]', name)
+            if parts:
+                cn_part = re.sub(r'^[^\u4e00-\u9fff]*', '', parts[0]).strip()
+                num = match.group(1)
+                return f"{cn_part} {num}"
+        return name
 
     def _load_stats(self) -> Dict:
         """加载统计数据"""

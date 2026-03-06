@@ -361,9 +361,15 @@ const sortedNodes = computed(() => {
     const q = searchQuery.value.toLowerCase()
     list = list.filter(n => n.name.toLowerCase().includes(q) || n.url.toLowerCase().includes(q))
   }
-  if (sortBy.value === 'success_rate') return list.sort((a, b) => (b.success_rate || 0) - (a.success_rate || 0))
-  if (sortBy.value === 'success_count') return list.sort((a, b) => (b.success_count || 0) - (a.success_count || 0))
-  if (sortBy.value === 'fail_count') return list.sort((a, b) => (a.fail_count || 0) - (b.fail_count || 0))
+  if (sortBy.value === 'success_rate') {
+    return list.sort((a, b) => {
+      const rateA = (a.success + a.fail) > 0 ? a.success / (a.success + a.fail) : 0
+      const rateB = (b.success + b.fail) > 0 ? b.success / (b.success + b.fail) : 0
+      return rateB - rateA
+    })
+  }
+  if (sortBy.value === 'success_count') return list.sort((a, b) => (b.success || 0) - (a.success || 0))
+  if (sortBy.value === 'fail_count') return list.sort((a, b) => (b.fail || 0) - (a.fail || 0))
   if (sortBy.value === 'name') return list.sort((a, b) => a.name.localeCompare(b.name))
   return list
 })
